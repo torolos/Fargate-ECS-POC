@@ -10,10 +10,10 @@ on:
 
 env:
     AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
-    REPOSITORY_NAME: fargate-ecs-poc-dotnet-api
+    REPOSITORY_NAME: fargate-ecs-poc-node-app-repo
     AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     CLUSTER_NAME: fargate-ecs-poc-cluster
-    SERVICE_NAME: fargate-ecs-poc-dotnet-api-service
+    SERVICE_NAME: fargate-ecs-poc-node-api-service
     DESIRED_COUNT: 1
 
 jobs:
