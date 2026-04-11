@@ -14,6 +14,7 @@ env:
     AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     CLUSTER_NAME: fargate-ecs-poc-cluster
     SERVICE_NAME: fargate-ecs-poc-dotnet-api-service
+    DESIRED_COUNT: 1
 
 jobs:
     deploy:
@@ -50,5 +51,4 @@ jobs:
 
             - name: Deploy to ECS Fargate
               run: |
-                aws ecs update-service --cluster ${{ env.CLUSTER_NAME }} --service ${{ env.SERVICE_NAME }} --force-new-deployment
-                aws ecs update-service --cluster ${{ env.CLUSTER_NAME }} --service ${{ env.SERVICE_NAME }} --force-new-deployment
+                aws ecs update-service --cluster ${{ env.CLUSTER_NAME }} --service ${{ env.SERVICE_NAME }} --desired-count ${{ env.DESIRED_COUNT }} --force-new-deployment

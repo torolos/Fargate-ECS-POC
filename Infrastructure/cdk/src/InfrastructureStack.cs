@@ -131,7 +131,7 @@ namespace Infrastructure
                 ServiceName = "fargate-ecs-poc-dotnet-api-service",
                 Cluster = cluster,
                 TaskDefinition = dotnetTaskDefinition,
-                DesiredCount = 1,
+                DesiredCount = 0,
             });
 
             /*
