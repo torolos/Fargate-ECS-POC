@@ -44,7 +44,7 @@ jobs:
 
             - name: Build and push Node API Docker image
               run: |
-                docker build -t ${{ env.REPOSITORY_NAME }} -f ./apps/nodeApi/Dockerfile .
+                docker build -t ${{ env.REPOSITORY_NAME }} -f ./apps/nodeAPI/Dockerfile .
                 docker tag ${{ env.REPOSITORY_NAME }}:latest ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
                 aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
                 docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
