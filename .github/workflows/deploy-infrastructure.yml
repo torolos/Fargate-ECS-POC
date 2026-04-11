@@ -44,6 +44,6 @@ jobs:
         
         - name: Deploy CDK stack
           run: |
-            cd Infrastructure/cdk
+            cd Infrastructure
             dotnet restore
             cdk deploy InfrastructureStack --require-approval never --verbose
