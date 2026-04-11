@@ -15,7 +15,13 @@ jobs:
     steps:
         - name: Checkout code
           uses: actions/checkout@v3
-     
+
+        - name: Verify repository structure
+          run: |
+            if [ ! -f "infrastructure/cdk/src/InfrastructureStack.cs" ]; then
+              echo "InfrastructureStack.cs not found in expected location"
+              exit 1
+            fi
         # - name: Configure AWS credentials
         #   uses: aws-actions/configure-aws-credentials@v1
         #   with:
