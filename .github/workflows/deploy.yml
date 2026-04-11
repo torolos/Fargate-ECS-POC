@@ -12,11 +12,20 @@ env:
 jobs:
   deploy-infrastructure:
     uses: ./.github/workflows/deploy-infrastructure.yml
+    permissions:
+      id-token: write
+      contents: read
 
   deploy-dotnet-api:
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-dotnet-api.yml
+    permissions:
+      id-token: write
+      contents: read
 
   deploy-node-api:
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-node-api.yml
+    permissions:
+      id-token: write
+      contents: read
