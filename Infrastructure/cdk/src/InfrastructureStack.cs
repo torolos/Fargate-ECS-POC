@@ -163,7 +163,7 @@ namespace Infrastructure
                 ServiceName = "fargate-ecs-poc-node-api-service",
                 Cluster = cluster,
                 TaskDefinition = nodeTaskDefinition,
-                DesiredCount = 1,
+                DesiredCount = 0,
             });
 
             #region Outputs
