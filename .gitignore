@@ -1,0 +1,146 @@
+# =============================================================================
+# .NET / C# (ASP.NET Core API + AWS CDK Infrastructure)
+# =============================================================================
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+Generated\ Files/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# MSTest / NUnit / xUnit
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+[Rr]esult*.xml
+coverage*.xml
+*.coverage
+*.coveragexml
+TestResults/
+
+# Publish / deployment output
+publish/
+**/Properties/PublishProfiles/
+
+# =============================================================================
+# Node.js (nodeAPI)
+# =============================================================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.npm/
+.yarn/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Runtime / temp
+.env
+.env.local
+.env.*.local
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Build output
+dist/
+build/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# =============================================================================
+# AWS CDK
+# =============================================================================
+
+cdk.out/
+.cdk.staging/
+cdk.context.json
+
+# =============================================================================
+# Docker
+# =============================================================================
+
+.dockerignore
+docker-compose.override.yml
+
+# =============================================================================
+# Environment & Secrets
+# =============================================================================
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials
+
+# =============================================================================
+# macOS
+# =============================================================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# =============================================================================
+# VS Code
+# =============================================================================
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# =============================================================================
+# Misc
+# =============================================================================
+
+*.bak
+*.tmp
+*.swp
+*.orig
+Thumbs.db

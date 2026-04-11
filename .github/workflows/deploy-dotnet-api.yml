@@ -1,0 +1,58 @@
+name: Build and Deploy to ECS Fargate
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+    AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
+    REPOSITORY_NAME: fargate-ecs-poc-dotnet-api
+    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    CLUSTER_NAME: fargate-ecs-poc-cluster
+    SERVICE_NAME: fargate-ecs-poc-dotnet-api-service
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ${{ env.AWS_REGION }}
+            
+            - name: Set up .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                dotnet-version: '10.0.x'
+              
+            - name: Check stack exists
+              id: check_stack
+              run: |
+                if aws cloudformation describe-stacks --stack-name fargate-ecs-poc-infrastructure; then
+                  echo "Stack exists"
+                  echo "exists=true" >> $GITHUB_OUTPUT
+                else
+                  echo "Stack does not exist"
+                  echo "exists=false" >> $GITHUB_OUTPUT
+                fi
+
+            - name: Build and push .NET API Docker image
+              run: |
+                docker build -t ${{ env.REPOSITORY_NAME }} -f ./apps/dotnetAPI/Dockerfile .
+                docker tag ${{ env.REPOSITORY_NAME }}:latest ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
+                aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+                docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
+
+            - name: Deploy to ECS Fargate
+              run: |
+                aws ecs update-service --cluster ${{ env.CLUSTER_NAME }} --service ${{ env.SERVICE_NAME }} --force-new-deployment
+                aws ecs update-service --cluster ${{ env.CLUSTER_NAME }} --service ${{ env.SERVICE_NAME }} --force-new-deployment

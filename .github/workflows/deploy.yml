@@ -1,0 +1,22 @@
+name: Deploy to AWS
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:  
+    AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
+
+jobs:
+  deploy-infrastructure:
+    uses: ./.github/workflows/deploy-infrastructure.yml
+
+  deploy-dotnet-api:
+    needs: deploy-infrastructure
+    uses: ./.github/workflows/deploy-dotnet-api.yml
+
+  deploy-node-api:
+    needs: deploy-infrastructure
+    uses: ./.github/workflows/deploy-node-api.yml
