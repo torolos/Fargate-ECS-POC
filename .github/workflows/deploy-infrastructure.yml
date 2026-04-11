@@ -11,6 +11,9 @@ env:
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
         - name: Checkout code
           uses: actions/checkout@v3
@@ -43,6 +46,6 @@ jobs:
         
         - name: Deploy CDK stack
           run: |
-            cd infrastructure/cdk
+            cd Infrastructure/cdk
             dotnet restore
-            cdk deploy --require-approval never --verbose
+            cdk deploy InfrastructureStack --require-approval never --verbose

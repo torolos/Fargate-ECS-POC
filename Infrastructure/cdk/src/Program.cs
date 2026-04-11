@@ -10,6 +10,20 @@ namespace Infrastructure
         public static void Main(string[] args)
         {
             var app = new App();
+
+            // Deploy this stack once manually from your local machine to bootstrap OIDC.
+            // After that, GitHub Actions uses OIDC to deploy InfrastructureStack.
+            new GitHubOidcStack(app, "GitHubOidcStack",
+                githubRepo: "dimitris-torolopoulos/Fargate-ECS-POC",
+                props: new StackProps
+                {
+                    Env = new Amazon.CDK.Environment
+                    {
+                        Account = System.Environment.GetEnvironmentVariable("CDK_DEFAULT_ACCOUNT"),
+                        Region = System.Environment.GetEnvironmentVariable("CDK_DEFAULT_REGION"),
+                    }
+                });
+
             new InfrastructureStack(app, "InfrastructureStack", new StackProps
             {
                 // If you don't specify 'env', this stack will be environment-agnostic.

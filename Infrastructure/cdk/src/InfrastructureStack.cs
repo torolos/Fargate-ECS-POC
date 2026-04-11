@@ -3,7 +3,6 @@ using Amazon.CDK.AWS.ECR;
 using Amazon.CDK.AWS.ECS;
 using Amazon.CDK.AWS.EC2;
 using Amazon.CDK.AWS.ECS.Patterns;
-using Amazon.CDK.AWS.IAM;
 using Constructs;
 using System.Collections.Generic;
 
@@ -15,58 +14,6 @@ namespace Infrastructure
         {
             Amazon.CDK.Tags.Of(this).Add("CreatedBy", "dtorolopoulos");
             Amazon.CDK.Tags.Of(this).Add("Purpose", "POC");
-
-            var githubOidcProvider = new OpenIdConnectProvider(
-                this, "GitHubOIDCProvider", 
-                new OpenIdConnectProviderProps
-                {
-                    Url = "https://token.actions.githubusercontent.com",
-                    ClientIds = ["sts.amazonaws.com"]
-                }
-            );
-
-            var githubRole = new Role(this, "GitHubActionsRole", new RoleProps
-            {
-                RoleName = "fargate-ecs-poc-github-actions-role",
-                AssumedBy = new FederatedPrincipal(
-                    githubOidcProvider.OpenIdConnectProviderArn,
-                    new Dictionary<string, object>
-                    {
-                        ["StringEquals"] = new Dictionary<string, string>
-                        {
-                            ["token.actions.githubusercontent.com:aud"] = "sts.amazonaws.com",
-                            // ["token.actions.githubusercontent.com:sub"] = "repo:dimitris-torolopoulos/Fargate-ECS-POC:ref:refs/heads/main"
-                        },
-                        ["StringLike"] = new Dictionary<string, string>
-                        {
-                            // ["token.actions.githubusercontent.com:sub"] = "repo:dimitris-torolopoulos/Fargate-ECS-POC:*"
-                            ["token.actions.githubusercontent.com:sub"] = "repo:*:*"
-                        }
-                    },
-                    "sts:AssumeRoleWithWebIdentity"
-                ),
-                Description = "Role for GitHub Actions to deploy to ECS Fargate",
-            });
-
-            // githubRole.AddManagedPolicy(ManagedPolicy.FromAwsManagedPolicyName("AdministratorAccess"));
-            githubRole.AddToPolicy(new PolicyStatement(new PolicyStatementProps
-            {
-                Effect = Effect.ALLOW,
-                Actions = new[] 
-                {
-                    "ecr:GetAuthorizationToken",
-                    "ecr:BatchCheckLayerAvailability",
-                    "ecr:GetDownloadUrlForLayer",
-                    "ecr:BatchGetImage",
-                    "ecr:PutImage",
-                    "ecr:InitiateLayerUpload",
-                    "ecr:UploadLayerPart",
-                    "ecr:CompleteLayerUpload",
-                    "ecs:UpdateService",
-                    "ecs:DescribeServices"
-                },
-                Resources = new[] { "*" }
-            }));
 
             var dotnetImageTag = Node.TryGetContext("dotnetImageTag")?.ToString() ?? "latest";
             var nodeImageTag = Node.TryGetContext("nodeImageTag")?.ToString() ?? "latest";
@@ -118,14 +65,14 @@ namespace Infrastructure
             {
                 LogGroupName = "ecs/fargate-ecs-poc/dotnet-api",
                 Retention = Amazon.CDK.AWS.Logs.RetentionDays.ONE_DAY,
-                RemovalPolicy = RemovalPolicy.SNAPSHOT
+                RemovalPolicy = RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
             });
 
             var nodeLogGroup = new Amazon.CDK.AWS.Logs.LogGroup(this, "NodeApiLogGroup", new Amazon.CDK.AWS.Logs.LogGroupProps
             {
                 LogGroupName = "ecs/fargate-ecs-poc/node-api",
                 Retention = Amazon.CDK.AWS.Logs.RetentionDays.ONE_DAY,
-                RemovalPolicy = RemovalPolicy.SNAPSHOT
+                RemovalPolicy = RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
             });
 
             var dotnetTaskDefinition = new FargateTaskDefinition(this, "DotnetApiTaskDef", new FargateTaskDefinitionProps
@@ -225,12 +172,6 @@ namespace Infrastructure
             });
 
             #region Outputs
-            _ = new CfnOutput(this, "GitHubActionsRoleArn", new CfnOutputProps
-            {
-                ExportName = "GitHubActionsRoleArn",
-                Value = githubRole.RoleArn,
-                Description = "ARN of the IAM Role for GitHub Actions"
-            });
 
             _ = new CfnOutput(this, "DotnetRepositoryUri", new CfnOutputProps
             {
@@ -302,26 +243,7 @@ namespace Infrastructure
                 Description = "Name of the CloudWatch Log Group for the Node.js API"
             });
 
-            _ = new CfnOutput(this, "GitHubOIDCProviderArn", new CfnOutputProps
-            {
-                ExportName = "GitHubOIDCProviderArn",
-                Value = githubOidcProvider.OpenIdConnectProviderArn,
-                Description = "ARN of the GitHub OIDC Provider"
-            });
-
-            _ = new CfnOutput(this, "GitHubRoleName", new CfnOutputProps
-            {
-                ExportName = "GitHubRoleName",
-                Value = githubRole.RoleName,
-                Description = "Name of the IAM Role for GitHub Actions"
-            });
-
-            _ = new CfnOutput(this, "GitHubRoleArn", new CfnOutputProps
-            {
-                ExportName = "GitHubRoleArn",
-                Value = githubRole.RoleArn,
-                Description = "ARN of the IAM Role for GitHub Actions"
-            });
+            
             #endregion
         }
     }
