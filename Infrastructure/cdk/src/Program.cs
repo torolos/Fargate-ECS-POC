@@ -14,7 +14,7 @@ namespace Infrastructure
             // Deploy this stack once manually from your local machine to bootstrap OIDC.
             // After that, GitHub Actions uses OIDC to deploy InfrastructureStack.
             new GitHubOidcStack(app, "GitHubOidcStack",
-                githubRepo: "dimitris-torolopoulos/Fargate-ECS-POC",
+                githubRepo: "torolos/Fargate-ECS-POC",
                 props: new StackProps
                 {
                     Env = new Amazon.CDK.Environment

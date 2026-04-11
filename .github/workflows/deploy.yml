@@ -16,7 +16,7 @@ jobs:
       id-token: write
       contents: read
     secrets: inherit
-
+    
   deploy-dotnet-api:
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-dotnet-api.yml
