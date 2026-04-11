@@ -18,7 +18,7 @@ jobs:
 
         - name: Verify repository structure
           run: |
-            if [ ! -f "infrastructure/cdk/src/InfrastructureStack.cs" ]; then
+            if [ ! -f "Infrastructure/cdk/src/InfrastructureStack.cs" ]; then
               echo "InfrastructureStack.cs not found in expected location"
               exit 1
             fi
