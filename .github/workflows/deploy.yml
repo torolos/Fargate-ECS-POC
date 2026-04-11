@@ -15,6 +15,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    secrets: inherit
 
   deploy-dotnet-api:
     needs: deploy-infrastructure
@@ -22,6 +23,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    secrets: inherit
 
   deploy-node-api:
     needs: deploy-infrastructure
@@ -29,3 +31,5 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    secrets: inherit
+
