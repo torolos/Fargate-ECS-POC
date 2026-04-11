@@ -1,11 +1,12 @@
 name: Build and Deploy to ECS Fargate
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  workflow_dispatch:
+  workflow_call:
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  # workflow_dispatch:
 
 env:
     AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}

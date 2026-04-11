@@ -1,10 +1,11 @@
 name: Build and deploy infrastructure with CDK
 on:
-  push:
-    branches:
-      - main
-      - master
-  workflow_dispatch:
+  workflow_call:
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  # workflow_dispatch:
 env:  
     AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
 jobs:
