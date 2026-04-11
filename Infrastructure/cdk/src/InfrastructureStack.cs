@@ -65,14 +65,14 @@ namespace Infrastructure
             {
                 LogGroupName = "ecs/fargate-ecs-poc/dotnet-api",
                 Retention = Amazon.CDK.AWS.Logs.RetentionDays.ONE_DAY,
-                RemovalPolicy = RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
+                RemovalPolicy = RemovalPolicy.DESTROY
             });
 
             var nodeLogGroup = new Amazon.CDK.AWS.Logs.LogGroup(this, "NodeApiLogGroup", new Amazon.CDK.AWS.Logs.LogGroupProps
             {
                 LogGroupName = "ecs/fargate-ecs-poc/node-api",
                 Retention = Amazon.CDK.AWS.Logs.RetentionDays.ONE_DAY,
-                RemovalPolicy = RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
+                RemovalPolicy = RemovalPolicy.DESTROY
             });
 
             var dotnetTaskDefinition = new FargateTaskDefinition(this, "DotnetApiTaskDef", new FargateTaskDefinitionProps
