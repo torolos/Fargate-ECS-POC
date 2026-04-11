@@ -24,8 +24,11 @@ namespace Infrastructure
                     }
                 });
 
-            new InfrastructureStack(app, "InfrastructureStack", new StackProps
+            var networkStack = new NetworkStack(app, "NetworkStack");
+
+            var infrastructureStack = new InfrastructureStack(app, "InfrastructureStack", new InfrastructureStackProps
             {
+                Vpc = networkStack.Vpc,
                 // If you don't specify 'env', this stack will be environment-agnostic.
                 // Account/Region-dependent features and context lookups will not work,
                 // but a single synthesized template can be deployed anywhere.
@@ -52,6 +55,7 @@ namespace Infrastructure
                 
                 // For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
             });
+            infrastructureStack.AddDependency(networkStack);
             app.Synth();
         }
     }

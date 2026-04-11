@@ -10,7 +10,7 @@ namespace Infrastructure
 {
     public class InfrastructureStack : Stack
     {
-        internal InfrastructureStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
+        internal InfrastructureStack(Construct scope, string id, InfrastructureStackProps props) : base(scope, id, props)
         {
             Amazon.CDK.Tags.Of(this).Add("CreatedBy", "dtorolopoulos");
             Amazon.CDK.Tags.Of(this).Add("Purpose", "POC");
@@ -18,12 +18,7 @@ namespace Infrastructure
             var dotnetImageTag = Node.TryGetContext("dotnetImageTag")?.ToString() ?? "latest";
             var nodeImageTag = Node.TryGetContext("nodeImageTag")?.ToString() ?? "latest";
 
-            var vpc = new Vpc(this, "FargateEcsPocVpc", new VpcProps
-            {
-                IpAddresses = IpAddresses.Cidr("10.0.0.0/16"),
-                MaxAzs = 2,
-                NatGateways = 1,
-            });
+            var vpc = props.Vpc;
 
             var cluster = new Cluster(this, "FargateEcsPocCluster", new ClusterProps
             {
