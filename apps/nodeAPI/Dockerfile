@@ -1,13 +1,14 @@
-FROM node:22-alpine
+FROM node:24-alpine
 WORKDIR /app
 
-# copy package.json and package-lock.json to the working directory
-COPY package.json ./
+# copy package.json to the working directory
+COPY apps/nodeAPI/package.json ./
+RUN ls -la
 
-# install dependencies from lock file
+# install dependencies
 RUN npm i --omit-dev
 
-COPY . .
+COPY apps/nodeAPI/ .
 
 RUN ls -la
 # Create db.json with empty JSON object if it doesn't exist
