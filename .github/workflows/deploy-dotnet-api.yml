@@ -1,4 +1,4 @@
-name: Build and Deploy to ECS Fargate
+name: Build (dotnetAPI) and Deploy to ECS Fargate
 
 on:
   workflow_call:
