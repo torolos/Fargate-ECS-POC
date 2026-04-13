@@ -17,7 +17,23 @@ env:
     DESIRED_COUNT: 1
 
 jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up NodeJS
+              uses: actions/setup-node@v3
+              with:
+                node-version: '24.x'
+              
+            - name: Run tests
+              run: npx jest --verbose
+              
     deploy:
+
         runs-on: ubuntu-latest
 
         steps:
