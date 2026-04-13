@@ -1,0 +1,33 @@
+name: Sample workflow for deploying to multiple environments
+
+on: 
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        name: Deploy to ${{matrix.account}}:${{ matrix.environment }}.${{ matrix.region }}
+        strategy:
+            matrix:
+                include:
+                    - environment: dev
+                      region: eu-west-1
+                      account: 111111111111
+                    - environment: staging
+                      region: eu-west-2
+                      account: 222222222222
+                    - environment: prod
+                      region: eu-west-1
+                      account: 333333333333
+                    - environment: qa
+                      region: us-east-1
+                      account: 111111111111
+                    - environment: uat
+                      region: us-east-2
+                      account: 222222222222
+
+        concurrency:  deploy-${{ matrix.environment }}-${{ matrix.region }}-${{ matrix.account }}
+        uses: ./.github/workflows/deploy-resusable.yml
+        with:
+            environment: ${{ matrix.environment }}
+            region: ${{ matrix.region }}
+            account: ${{ matrix.account }}

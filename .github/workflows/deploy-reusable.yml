@@ -1,0 +1,25 @@
+name: Reusable workflow for deploying to mutliple environments
+
+on: 
+    workflow_call:
+        inputs:
+            environment:
+                required: true
+                type: string
+            region:
+                required: true
+                type: string
+            account:
+                required: true
+                type: string
+
+jobs:
+    deploy:
+        name: Build for ${{ inputs.account }}:${{ inputs.environment }}.${{ inputs.region }}
+        runs-on: ubuntu-latest
+        steps: 
+            - name: Do something useful here
+              run: echo "Building for ${{ inputs.account }}:${{ inputs.environment }}.${{ inputs.region }}"
+
+            - name: Do something even more useful here
+              run: echo "Deploying to ${{ inputs.account }}:${{ inputs.environment }}.${{ inputs.region }}"
