@@ -26,7 +26,7 @@ jobs:
                       account: 222222222222
 
         concurrency:  deploy-${{ matrix.environment }}-${{ matrix.region }}-${{ matrix.account }}
-        uses: ./.github/workflows/deploy-resusable.yml
+        uses: ./.github/workflows/deploy-reusable.yml
         with:
             environment: ${{ matrix.environment }}
             region: ${{ matrix.region }}
