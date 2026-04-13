@@ -1,0 +1,43 @@
+name: Build (dotnetAPI) and Deploy to ECS Fargate
+
+on:
+  workflow_call:
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  # workflow_dispatch:
+
+env:
+    AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
+    REPOSITORY_NAME: fargate-ecs-poc-dotnet-app-repo
+    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    CLUSTER_NAME: fargate-ecs-poc-cluster
+    SERVICE_NAME: fargate-ecs-poc-dotnet-api-service
+    DESIRED_COUNT: 2
+
+jobs:
+    run-tests:
+        uses: torolos/github-workflows/.github/workflows/dotnet-test.yml@main
+        with:
+          project: ./apps/dotnetAPI.tests/dotnetAPI.tests.csproj
+          verbosity: normal
+          version: '10.0.x'
+
+    deploy:
+        needs: run-tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            
+            - name: Set up .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                dotnet-version: '10.0.x'
+
+            - name: Build .NET API
+              run: |
+                echo "Building Docker image for .NET API..."
+                dotnet build ./apps/dotnetAPI/dotnetAPI.csproj --configuration Release

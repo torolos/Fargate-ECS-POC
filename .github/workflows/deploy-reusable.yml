@@ -19,7 +19,9 @@ jobs:
         runs-on: ubuntu-latest
         steps: 
             - name: Do something useful here
+              id: _build
               run: echo "Building for ${{ inputs.account }}:${{ inputs.environment }}.${{ inputs.region }}"
 
             - name: Do something even more useful here
+              id: _deploy
               run: echo "Deploying to ${{ inputs.account }}:${{ inputs.environment }}.${{ inputs.region }}"
