@@ -18,7 +18,7 @@ env:
 
 jobs:
     run-tests:
-        uses: torolos/github-workflows/.github/workflows/dotnet-test.yml@main
+        uses: torolos/github-workflows/.github/workflows/dotnet-test.yml@master
         with:
           project: ./apps/dotnetAPI.tests/dotnetAPI.tests.csproj
           verbosity: normal
