@@ -20,9 +20,9 @@ jobs:
     run-tests:
         uses: torolos/github-workflows/.github/workflows/dotnet-test.yml@master
         with:
-          project: ./apps/dotnetAPI.tests/dotnetAPI.tests.csproj
+          test-project: ./apps/dotnetAPI.tests/dotnetAPI.tests.csproj
           verbosity: normal
-          version: '10.0.x'
+          dotnet-version: '10.0.x'
 
     deploy:
         needs: run-tests
