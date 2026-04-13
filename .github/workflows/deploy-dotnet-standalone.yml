@@ -1,12 +1,12 @@
 name: Sample standalone for testing org reusable
 
 on:
-  workflow_call:
+  #workflow_call:
   # push:
   #   branches:
   #     - main
   #     - master
-  # workflow_dispatch:
+  workflow_dispatch:
 
 env:
     AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
