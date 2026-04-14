@@ -58,12 +58,26 @@ jobs:
               with:
                 node-version: '24.x'
 
+            - name: Compute image tags
+              id: image_tags
+              run: |
+                SHORT_SHA="${GITHUB_SHA::12}"
+                echo "immutable=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
             - name: Build and push Node API Docker image
               run: |
-                docker build -t ${{ env.REPOSITORY_NAME }} -f ./apps/nodeAPI/Dockerfile .
-                docker tag ${{ env.REPOSITORY_NAME }}:latest ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
+                REGISTRY="${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com"
+                IMAGE="${REGISTRY}/${{ env.REPOSITORY_NAME }}"
+
                 aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-                docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:latest
+
+                docker build \
+                  -t "${IMAGE}:${{ steps.image_tags.outputs.immutable }}" \
+                  -t "${IMAGE}:latest" \
+                  -f ./apps/nodeAPI/Dockerfile .
+
+                docker push "${IMAGE}:${{ steps.image_tags.outputs.immutable }}"
+                docker push "${IMAGE}:latest"
 
             - name: Deploy to ECS Fargate
               run: |
