@@ -30,7 +30,9 @@ jobs:
                 node-version: '24.x'
               
             - name: Run tests
-              run: npx jest --verbose
+              run: |
+                cd ./apps/nodeAPI
+                npx jest --verbose
 
     deploy:
         needs: run-tests
