@@ -24,6 +24,17 @@ jobs:
           verbosity: normal
           dotnet-version: '10.0.x'
 
+    example-job:
+        needs: run-tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Run shared common action
+              uses: torolos/ci-cd/actions/dotnet-test.yml@master
+              with:
+                  verbocity: detailed
+                  dotnet-version: 10.0.x
+                  project-location: ./apps/dotnetAPI/dotnetAPI.csproj
+                  
     deploy:
         needs: run-tests
         runs-on: ubuntu-latest
