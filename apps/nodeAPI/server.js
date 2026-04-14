@@ -33,6 +33,10 @@ const getIdKey = (resource, data) => {
     return idKey;
 }
 
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'Healthy' });
+});
+
 app.get('/api/:resource/:identifier', (req, res) => {
     const { resource, identifier } = req.params;
     const data = loadData();
