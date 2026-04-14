@@ -35,12 +35,12 @@ jobs:
                   dotnet-version: 10.0.x
                   project-location: ./apps/dotnetAPI/dotnetAPI.csproj
 
-    js-action-job:
+    sh-action-job:
         needs: run-tests
         runs-on: ubuntu-latest
         steps:
             - name: Run js action
-              uses: torolos/ci-cd/actions/js-action@master
+              uses: torolos/ci-cd/actions/test-action-sh@master
               with:
                   test-project: "A test project"
                   message-count: 5
