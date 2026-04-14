@@ -1,6 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.ECR;
 using Amazon.CDK.AWS.ECS;
+using Amazon.CDK.AWS.ElasticLoadBalancingV2;
 using Amazon.CDK.AWS.EC2;
 using Amazon.CDK.AWS.ECS.Patterns;
 using Constructs;
@@ -126,68 +127,152 @@ namespace Infrastructure
             });
             nodeRepository.GrantPull(nodeTaskDefinition.ExecutionRole);
 
-            // var dotnetService = new FargateService(this, "DotnetApiService", new FargateServiceProps
-            // {
-            //     ServiceName = "fargate-ecs-poc-dotnet-api-service",
-            //     Cluster = cluster,
-            //     TaskDefinition = dotnetTaskDefinition,
-            //     DesiredCount = 0,
-            // });
-
-            /*
-            Uncomment below to create an Application Load Balanced Fargate Service instead of a plain Fargate Service. This will create an ALB in front of the service and automatically register the tasks to the target group. The ALB will be internet-facing and will listen on port 80. The health check will be configured to check the /api/health endpoint of the application.
-            */
-            var dotnetService = new ApplicationLoadBalancedFargateService(this, "DotnetApiALBService", new ApplicationLoadBalancedFargateServiceProps
+            var dotnetService = new FargateService(this, "DotnetApiService", new FargateServiceProps
             {
                 ServiceName = "fargate-ecs-poc-dotnet-api-service",
                 Cluster = cluster,
                 TaskDefinition = dotnetTaskDefinition,
-                DesiredCount = 1,
-                PublicLoadBalancer = true,
-                ListenerPort = 80,
-                AssignPublicIp = true,
-                HealthCheckGracePeriod = Duration.Seconds(60)
+                DesiredCount = 0,
             });
-            dotnetService.TargetGroup.ConfigureHealthCheck(new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
-            {
-                Path = "/api/health",
-                Interval = Duration.Seconds(30),
-                Timeout = Duration.Seconds(5),
-                HealthyThresholdCount = 2,
-                UnhealthyThresholdCount = 5,
-                HealthyHttpCodes = "200-399"
-            });
-            
-            // var nodeService = new FargateService(this, "NodeApiService", new FargateServiceProps
+
+            /*
+            Uncomment below to create an Application Load Balanced Fargate Service instead of a plain Fargate Service. This will create an ALB in front of the service and automatically register the tasks to the target group. The ALB will be internet-facing and will listen on port 80. The health check will be configured to check the /api/health endpoint of the application.
+            */
+            // var dotnetService = new ApplicationLoadBalancedFargateService(this, "DotnetApiALBService", new ApplicationLoadBalancedFargateServiceProps
             // {
-            //     ServiceName = "fargate-ecs-poc-node-api-service",
+            //     ServiceName = "fargate-ecs-poc-dotnet-api-service",
             //     Cluster = cluster,
-            //     TaskDefinition = nodeTaskDefinition,
-            //     DesiredCount = 0,
+            //     TaskDefinition = dotnetTaskDefinition,
+            //     DesiredCount = 1,
+            //     PublicLoadBalancer = true,
+            //     ListenerPort = 80,
+            //     AssignPublicIp = true,
+            //     HealthCheckGracePeriod = Duration.Seconds(60)
+            // });
+            // dotnetService.TargetGroup.ConfigureHealthCheck(new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
+            // {
+            //     Path = "/api/health",
+            //     Interval = Duration.Seconds(30),
+            //     Timeout = Duration.Seconds(5),
+            //     HealthyThresholdCount = 2,
+            //     UnhealthyThresholdCount = 5,
+            //     HealthyHttpCodes = "200-399"
             // });
 
-            var nodeService = new ApplicationLoadBalancedFargateService(this, "NodeApiALBService", new ApplicationLoadBalancedFargateServiceProps
+            var dotnetAlb = new ApplicationLoadBalancer(this, "DotnetApiAlb", new ApplicationLoadBalancerProps
+            {
+                Vpc = vpc,
+                InternetFacing = true,
+                LoadBalancerName = "fargate-ecs-poc-dotnet-alb"
+            });
+
+            var dotnetListener = dotnetAlb.AddListener("DotnetApiListener", new BaseApplicationListenerProps
+            {
+                Port = 80,
+                Protocol = ApplicationProtocol.HTTP,
+                Open = true
+            });
+
+            dotnetListener.AddTargets("DotnetApiTargets", new AddApplicationTargetsProps
+            {
+                Port = 8080,
+                Protocol = ApplicationProtocol.HTTP,
+                Targets =
+                [
+                    dotnetService.LoadBalancerTarget(new LoadBalancerTargetOptions
+                    {
+                        ContainerName = "dotnet-api",
+                        ContainerPort = 8080
+                    })
+                ],
+                HealthCheck = new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
+                {
+                    Path = "/api/health",
+                    Interval = Duration.Seconds(30),
+                    Timeout = Duration.Seconds(5),
+                    HealthyThresholdCount = 2,
+                    UnhealthyThresholdCount = 5,
+                    HealthyHttpCodes = "200-399"
+                }
+            });
+
+            var nodeService = new FargateService(this, "NodeApiService", new FargateServiceProps
             {
                 ServiceName = "fargate-ecs-poc-node-api-service",
                 Cluster = cluster,
                 TaskDefinition = nodeTaskDefinition,
-                DesiredCount = 1,
-                PublicLoadBalancer = true,
-                ListenerPort = 80,
-                AssignPublicIp = true,
-                HealthCheckGracePeriod = Duration.Seconds(60)
+                DesiredCount = 0,
             });
-            nodeService.TargetGroup.ConfigureHealthCheck(new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
+
+            // var nodeService = new ApplicationLoadBalancedFargateService(this, "NodeApiALBService", new ApplicationLoadBalancedFargateServiceProps
+            // {
+            //     ServiceName = "fargate-ecs-poc-node-api-service",
+            //     Cluster = cluster,
+            //     TaskDefinition = nodeTaskDefinition,
+            //     DesiredCount = 1,
+            //     PublicLoadBalancer = true,
+            //     ListenerPort = 80,
+            //     AssignPublicIp = true,
+            //     HealthCheckGracePeriod = Duration.Seconds(60)
+            // });
+            // nodeService.TargetGroup.ConfigureHealthCheck(new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
+            // {
+            //     Path = "/api/health",
+            //     Interval = Duration.Seconds(30),
+            //     Timeout = Duration.Seconds(5),
+            //     HealthyThresholdCount = 2,
+            //     UnhealthyThresholdCount = 5,
+            //     HealthyHttpCodes = "200-399"
+            // });
+
+            var nodeAlb = new ApplicationLoadBalancer(this, "NodeApiAlb", new ApplicationLoadBalancerProps
             {
-                Path = "/api/health",
-                Interval = Duration.Seconds(30),
-                Timeout = Duration.Seconds(5),
-                HealthyThresholdCount = 2,
-                UnhealthyThresholdCount = 5,
-                HealthyHttpCodes = "200-399"
+                Vpc = vpc,
+                InternetFacing = true,
+                LoadBalancerName = "fargate-ecs-poc-node-alb"
+            });
+
+            var nodeListener = nodeAlb.AddListener("NodeApiListener", new BaseApplicationListenerProps
+            {
+                Port = 80,
+                Protocol = ApplicationProtocol.HTTP,
+                Open = true
+            });
+
+            nodeListener.AddTargets("NodeApiTargets", new AddApplicationTargetsProps
+            {
+                Port = 3020,
+                Protocol = ApplicationProtocol.HTTP,
+                Targets =
+                [
+                    nodeService.LoadBalancerTarget(new LoadBalancerTargetOptions
+                    {
+                        ContainerName = "node-api",
+                        ContainerPort = 3020
+                    })
+                ],
+                HealthCheck = new Amazon.CDK.AWS.ElasticLoadBalancingV2.HealthCheck
+                {
+                    Path = "/api/health",
+                    Interval = Duration.Seconds(30),
+                    Timeout = Duration.Seconds(5),
+                    HealthyThresholdCount = 2,
+                    UnhealthyThresholdCount = 5,
+                    HealthyHttpCodes = "200-399"
+                }
             });
 
             #region Outputs
+
+            _ = new CfnOutput(this, "DotnetAlbDns", new CfnOutputProps
+            {
+                Value = dotnetAlb.LoadBalancerDnsName
+            });
+            
+            _ = new CfnOutput(this, "NodeAlbDns", new CfnOutputProps
+            {
+                Value = nodeAlb.LoadBalancerDnsName
+            });
 
             _ = new CfnOutput(this, "DotnetRepositoryUri", new CfnOutputProps
             {
@@ -206,14 +291,14 @@ namespace Infrastructure
             _ = new CfnOutput(this, "DotnetApiServiceName", new CfnOutputProps
             {
                 ExportName = "DotnetApiServiceName",
-                Value = dotnetService.Service.ServiceName,
+                Value = dotnetService.ServiceName,
                 Description = "Name of the Fargate service for the .NET API"
             });
 
             _ = new CfnOutput(this, "NodeApiServiceName", new CfnOutputProps
             {
                 ExportName = "NodeApiServiceName",
-                Value = nodeService.Service.ServiceName,
+                Value = nodeService.ServiceName,
                 Description = "Name of the Fargate service for the Node.js API"
             });
             
