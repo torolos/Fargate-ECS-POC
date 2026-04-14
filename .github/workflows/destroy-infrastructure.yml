@@ -5,6 +5,10 @@ on:
 env:  
     AWS_REGION: ${{ vars.AWS_REGION  || 'eu-west-1' }}
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   destroy-infrastructure:
     runs-on: ubuntu-latest
