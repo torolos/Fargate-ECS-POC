@@ -89,7 +89,7 @@ namespace Infrastructure
                 Environment = new Dictionary<string, string>
                 {
                     ["ASPNETCORE_ENVIRONMENT"] = "Development",
-                    ["ASPNETCORE_URLS"] = "http://+:80"
+                    ["ASPNETCORE_URLS"] = "http://+:8080"
                 }   
             });
             dotnetContainer.AddPortMappings(new PortMapping
