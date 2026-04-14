@@ -2,7 +2,6 @@ using Amazon.CDK;
 using Amazon.CDK.AWS.ECR;
 using Amazon.CDK.AWS.ECS;
 using Amazon.CDK.AWS.ElasticLoadBalancingV2;
-using Amazon.CDK.AWS.EC2;
 using Amazon.CDK.AWS.ECS.Patterns;
 using Constructs;
 using System.Collections.Generic;
@@ -159,14 +158,14 @@ namespace Infrastructure
             //     HealthyHttpCodes = "200-399"
             // });
 
-            var dotnetAlb = new ApplicationLoadBalancer(this, "DotnetApiAlb", new ApplicationLoadBalancerProps
+            var dotnetAlb = new ApplicationLoadBalancer(this, "DotnetApiAlb", new Amazon.CDK.AWS.ElasticLoadBalancingV2.ApplicationLoadBalancerProps
             {
                 Vpc = vpc,
                 InternetFacing = true,
                 LoadBalancerName = "fargate-ecs-poc-dotnet-alb"
             });
 
-            var dotnetListener = dotnetAlb.AddListener("DotnetApiListener", new BaseApplicationListenerProps
+            var dotnetListener = dotnetAlb.AddListener("DotnetApiListener", new Amazon.CDK.AWS.ElasticLoadBalancingV2.BaseApplicationListenerProps
             {
                 Port = 80,
                 Protocol = ApplicationProtocol.HTTP,
@@ -225,7 +224,7 @@ namespace Infrastructure
             //     HealthyHttpCodes = "200-399"
             // });
 
-            var nodeAlb = new ApplicationLoadBalancer(this, "NodeApiAlb", new ApplicationLoadBalancerProps
+            var nodeAlb = new ApplicationLoadBalancer(this, "NodeApiAlb", new Amazon.CDK.AWS.ElasticLoadBalancingV2.ApplicationLoadBalancerProps
             {
                 Vpc = vpc,
                 InternetFacing = true,
@@ -268,7 +267,7 @@ namespace Infrastructure
             {
                 Value = dotnetAlb.LoadBalancerDnsName
             });
-            
+
             _ = new CfnOutput(this, "NodeAlbDns", new CfnOutputProps
             {
                 Value = nodeAlb.LoadBalancerDnsName

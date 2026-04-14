@@ -58,16 +58,16 @@ jobs:
             else
               echo "exists=false" >> $GITHUB_OUTPUT
             fi
-            
+
         - name: Deploy NetworkStack if missing
           if: steps.check-network.outputs.exists == 'false'
           run: |
             cd Infrastructure
             dotnet restore cdk/src/Infrastructure.csproj
-            cdk deploy NetworkStack --require-approval never --verbose
+            cdk deploy NetworkStack --exclusively --require-approval never --verbose
         
         - name: Deploy CDK stack
           run: |
             cd Infrastructure
             dotnet restore cdk/src/Infrastructure.csproj
-            cdk deploy InfrastructureStack --require-approval never --verbose
+            cdk deploy InfrastructureStack --exclusively --require-approval never --verbose
