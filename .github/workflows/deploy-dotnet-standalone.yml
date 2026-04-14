@@ -29,7 +29,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Run shared common action
-              uses: torolos/ci-cd/actions/dotnet-test.yml@master
+              uses: torolos/ci-cd/actions/test-action@master
               with:
                   verbocity: detailed
                   dotnet-version: 10.0.x
