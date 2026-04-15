@@ -170,11 +170,7 @@ You need both:
 
 ## 6) A context-specific note about security in your stack
 
-You currently attach:
-
-- `AdministratorAccess`
-
-So once a job from the allowed repo can assume this role, it has effectively full AWS permissions. That’s fine for a POC, but in production you typically tighten in two places:
+The `AdministratorAccess` policy is currently attached to the `github-actions-role`, so once a job from the allowed repo can assume this role, it has effectively full AWS permissions. That’s fine for a POC, but in production you typically tighten in two places:
 
 1) **Trust policy** (narrow the `sub`):
 - only a specific branch (e.g., `refs/heads/main`)
@@ -183,7 +179,3 @@ So once a job from the allowed repo can assume this role, it has effectively ful
 
 2) **Permissions policy** (replace `AdministratorAccess`):
 - minimum set for ECR push, ECS deploy, CloudFormation/CDK deploy, etc.
-
----
-
-If you tell me what you want the role to be used for (e.g., “CDK deploy to one account”, “push image to ECR and update ECS service”), I can suggest a tightened trust policy (`sub` patterns) and a least-privilege IAM policy tailored to that workflow.
