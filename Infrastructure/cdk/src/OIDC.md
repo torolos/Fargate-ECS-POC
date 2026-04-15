@@ -1,8 +1,5 @@
 This file defines an **AWS CDK stack** that sets up **GitHub Actions → AWS authentication via OIDC** (no long‑lived AWS access keys), and then creates an **IAM Role** that GitHub workflows in a specific repo are allowed to assume.
 
-```csharp name=GitHubOidcStack.cs url=https://github.com/torolos/Fargate-ECS-POC/blob/edeba3629872bbc0cefea2be590c7dcc74c646c9/Infrastructure/cdk/src/GitHubOidcStack.cs
-```
-
 ## What the stack contains
 
 ### 1) `GitHubOidcStack : Stack`
@@ -82,14 +79,9 @@ These outputs help you reference the role/provider from:
 ## In plain terms: what this enables
 After deploying this stack, you can configure a GitHub Actions workflow to use AWS OIDC (e.g., `aws-actions/configure-aws-credentials`) to assume `github-actions-role`, and it will succeed **only** for the repository passed into `githubRepo`.
 
-If you want, paste your GitHub workflow snippet (or tell me what repo string you pass as `githubRepo`), and I can point out exactly what the `sub` claim will look like and how to tighten it to a specific branch/environment.
-
 ----------------------------------------------------------------------------------
 
 Here’s how the **GitHub Actions OIDC provider works in AWS**, specifically as it’s defined in your `GitHubOidcStack.cs`.
-
-```csharp name=GitHubOidcStack.cs url=https://github.com/torolos/Fargate-ECS-POC/blob/edeba3629872bbc0cefea2be590c7dcc74c646c9/Infrastructure/cdk/src/GitHubOidcStack.cs#L18-L44
-```
 
 ## 1) What “OIDC Provider” means in AWS IAM
 
